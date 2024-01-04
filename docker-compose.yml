@@ -1,0 +1,30 @@
+services:
+
+  db:
+    container_name: is-db
+    build: docker/images/db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+
+  rpc-server:
+    container_name: is-rpc-server
+    build: docker/images/python
+    volumes:
+      - "./src/rpc-server:/app"
+    depends_on:
+      - db
+
+  rpc-client:
+    container_name: is-rpc-client
+    build: docker/images/python
+    volumes:
+      - "./src/rpc-client:/app"
+    stdin_open: true
+    tty: true
+    depends_on:
+      - rpc-server
+
+volumes:
+  postgres_data:
